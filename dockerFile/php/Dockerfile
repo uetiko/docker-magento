@@ -55,7 +55,6 @@ RUN printf '* *\t* * *\tapp\t%s/usr/local/bin/php /var/www/html/bin/magento cron
 RUN printf '* *\t* * *\tapp\t%s/usr/local/bin/php /var/www/html/bin/magento setup:cron:run\n#\n' >> /etc/crontab
 
 COPY conf/php/php.ini /usr/local/etc/php/
-COPY bin2/cronstart /usr/local/bin/
 
 RUN wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
 RUN sh ./install.sh
