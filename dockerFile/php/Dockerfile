@@ -58,7 +58,7 @@ COPY conf/php/php.ini /usr/local/etc/php/
 
 RUN wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
 RUN sh ./install.sh
-RUN rm ./install.slh
+RUN rm ./install.sh
 
 
 RUN usermod -u 1000 www-data
