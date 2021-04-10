@@ -1,0 +1,61 @@
+version: "3.3"
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: ./dockerFile/nginx/Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - phpfpm
+    volumes: 
+      - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /opt/projects/vass/telefonica/:/var/www/html
+
+  phpfpm:
+    build:
+      context: .
+      dockerfile: ./dockerFile/php/Dockerfile
+    container_name: phpfpm
+    hostname: phpfpm
+    restart: always
+    deploy:
+        resources:
+            limits:
+                cpus: '9'
+    environment:
+      DOCKER_USER: www-data
+      DOCKER_GROUP: www-data
+      REQUEST_TIMEOUT: 60
+      MAX_INPUT_TIME: 60
+      POST_MAX_SIZE: 30M
+    depends_on: 
+      - redis
+      - database
+    volumes:
+      - ~/.composer:/var/www/.composer:cached
+      - /opt/projects/vass/telefonica/:/var/www/html
+      - ./conf/php/loaded.ini:/usr/local/etc/php/conf.d/loaded.ini
+  
+  database:
+    image: mariadb:10.5.8
+    container_name: database
+    hostname: database
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=toor
+      - MYSQL_DATABASE=movistar
+      - MYSQL_USER=telefonica
+      - MYSQL_PASSWORD=vass
+    ports:
+    - "3306:3306"
+    volumes:
+    - ~/database/storage/mariadb/vass/telefonica/:/var/lib/mysql:rw
+    - ~/Documentos/vass/magento.sql:/home/sql/magento.sql:rw
+
+  redis:
+    image: redis:alpine
+    hostname: redis
+    ports:
+      - "6379:6379"
